@@ -1,4 +1,4 @@
-All source code included in the "Global Param Loader" Symphony Extension
+All source code included in the "Global Parameter Loader" Symphony Extension
 archive is, unless otherwise specified, released under the MIT licence as
 follows:
 

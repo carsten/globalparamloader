@@ -4,6 +4,7 @@ Global Parameter Loader
 Version: 1.0
 Author: Carsten de Vries <carsten@vrieswerk.nl>
 Build Date: 18 March 2009
+Github Repository: http://github.com/carsten/globalparamloader/tree/master
 Requirements: Symphony 2
 
 Allows you to add sets of parameters to Symphony's parameter pool while 
@@ -19,7 +20,7 @@ Installation
 2.  Enable it by selecting the "Global Parameter Loader", choose Enable from 
   the with-selected menu, then click Apply.
 
-  
+
 Usage
 -------------------------------------------------------------------------------
 
@@ -36,3 +37,12 @@ Usage
 
 5.  Click the Create Set button. Now, go see your newly added parameters at 
   your pages in Parameter debug mode (add ?debug=params to the page URL).
+
+
+Acknowledgments
+-------------------------------------------------------------------------------
+
+The Symphony development team and all contributors for such an amazing 
+content management system. Rowan Lewis for both his emailtemplatefilter and
+globalresourceloader extensions, on which this extension is based. Marcin 
+Konicki for telling me to reinstall this extension to make it work.
