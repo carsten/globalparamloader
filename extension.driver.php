@@ -12,7 +12,7 @@
 		public function about() {
 			return array(
 				'name'			=> 'Global Parameter Loader',
-				'version'		=> '1.1',
+				'version'		=> '1.1.5',
 				'release-date'	=> '2009-04-07',
 				'author'		=> array(
 					'name'			=> 'Carsten de Vries',
@@ -85,7 +85,7 @@
 			$sets = $this->getSets();
 			
 			foreach ($sets as $set) {
-				if(!$this->isPageSelected($context['page_data']['id'], $set['id'])) {
+				if(!$this->isPageSelected($context['params']['current-page-id'], $set['id'])) {
 					$parameters = $this->getParameters($set_id);
 					foreach ($parameters as $parameter) {
 						/*
@@ -191,7 +191,7 @@
 		
 		public function isPageSelected($id, $set_id) {
 			$pages = $this->getParamPages($set_id);
-
+			
 			return in_array($id, $pages);
 		}		
 	}
