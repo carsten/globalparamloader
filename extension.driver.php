@@ -12,14 +12,14 @@
 		public function about() {
 			return array(
 				'name'			=> 'Global Parameter Loader',
-				'version'		=> '1.0',
-				'release-date'	=> '2009-03-18',
+				'version'		=> '1.1',
+				'release-date'	=> '2009-04-07',
 				'author'		=> array(
 					'name'			=> 'Carsten de Vries',
 					'website'		=> 'http://www.vrieswerk.nl',
 					'email'			=> 'carsten@vrieswerk.nl'
 				),
-				'description'	=> 'Allows you to add parameters to Symphony\'s parameter pool.'
+				'description'	=> 'Allows you to add parameters, PHP evaluated or not, to Symphony\'s parameter pool.'
 	 		);
 		}
 		
@@ -88,7 +88,12 @@
 				if(!$this->isPageSelected($context['page_data']['id'], $set['id'])) {
 					$parameters = $this->getParameters($set_id);
 					foreach ($parameters as $parameter) {
-						$context['params'][$parameter['param']] = $parameter['value'];
+						/*
+							To do: add safe evaluation functionality.
+							If the parameter can be evaluated, it is. Otherwise, the parameter is 
+							added to the context without evaluation.
+						*/
+						$context['params'][$parameter['param']] = eval($parameter['value']) ? eval($parameter['value']) : $parameter['value'];
 					}
 				}
 			}
@@ -188,6 +193,6 @@
 			$pages = $this->getParamPages($set_id);
 
 			return in_array($id, $pages);
-		}
+		}		
 	}
 ?>
