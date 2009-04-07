@@ -1,14 +1,18 @@
 Global Parameter Loader
 -------------------------------------------------------------------------------
 
-Version: 1.0
+Version: 1.1
 Author: Carsten de Vries <carsten@vrieswerk.nl>
-Build Date: 18 March 2009
+Build Date: 7 April 2009
 Github Repository: http://github.com/carsten/globalparamloader/tree/master
 Requirements: Symphony 2
 
 Allows you to add sets of parameters to Symphony's parameter pool while 
-excluding specified pages.
+excluding specified pages. Furthermore, valid PHP code is parsed before adding 
+the parameter to the parameter pool.
+
+Warning: safe evaluation has not been added yet. Do not enable this extension 
+if you are not absolutely sure that your Symphony installation is secure.
 
 
 Installation
@@ -33,11 +37,26 @@ Usage
 3.  Click Add item to add a parameter. At least one parameter must be defined 
   for each set, and each parameter must have a name.
 
-4.  Choose any pages you wish to exclude from this Parameter Set.
+4.  Choose any pages you wish to exclude from this Parameter Set. Currently,
+  at least one has to be chosen.
 
 5.  Click the Create Set button. Now, go see your newly added parameters at 
   your pages in Parameter debug mode (add ?debug=params to the page URL).
 
+
+Example A: Add user IP address to the parameter pool
+-------------------------------------------------------------------------------
+
+1.	Add a parameter with parameter value:
+  return ($_SERVER['REMOTE_ADDR']);
+
+
+Example B: Add domainname and extension to the parameter pool
+-------------------------------------------------------------------------------
+
+1.	Add a parameter with parameter value:
+  return array_pop(explode('.', $_SERVER['SERVER_NAME'], 2));
+	
 
 Acknowledgments
 -------------------------------------------------------------------------------
