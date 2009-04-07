@@ -1,7 +1,7 @@
 Global Parameter Loader
 -------------------------------------------------------------------------------
 
-Version: 1.1
+Version: 1.1.5
 Author: Carsten de Vries <carsten@vrieswerk.nl>
 Build Date: 7 April 2009
 Github Repository: http://github.com/carsten/globalparamloader/tree/master
@@ -37,8 +37,7 @@ Usage
 3.  Click Add item to add a parameter. At least one parameter must be defined 
   for each set, and each parameter must have a name.
 
-4.  Choose any pages you wish to exclude from this Parameter Set. Currently,
-  at least one has to be chosen.
+4.  Choose any pages you wish to exclude from this Parameter Set.
 
 5.  Click the Create Set button. Now, go see your newly added parameters at 
   your pages in Parameter debug mode (add ?debug=params to the page URL).
