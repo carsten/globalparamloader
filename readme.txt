@@ -1,9 +1,9 @@
 Global Parameter Loader
 -------------------------------------------------------------------------------
 
-Version: 1.1.5
+Version: 1.1.6
 Author: Carsten de Vries <carsten@vrieswerk.nl>
-Build Date: 7 April 2009
+Build Date: 3 May 2009
 Github Repository: http://github.com/carsten/globalparamloader/tree/master
 Requirements: Symphony 2
 
