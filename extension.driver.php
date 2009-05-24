@@ -12,8 +12,8 @@
 		public function about() {
 			return array(
 				'name'			=> 'Global Parameter Loader',
-				'version'		=> '1.1.6',
-				'release-date'	=> '2009-04-07',
+				'version'		=> '1.1.7',
+				'release-date'	=> '2009-05-24',
 				'author'		=> array(
 					'name'			=> 'Carsten de Vries',
 					'website'		=> 'http://www.vrieswerk.nl',
@@ -93,7 +93,7 @@
 							If the parameter can be evaluated, it is. Otherwise, the parameter is 
 							added to the context without evaluation.
 						*/
-						$context['params'][$parameter['param']] = @eval($parameter['value']) ? eval($parameter['value']) : $parameter['value'];
+						$context['params'][$parameter['param']] = @eval($parameter['value']) !== FALSE ? eval($parameter['value']) : $parameter['value'];
 					}
 				}
 			}
