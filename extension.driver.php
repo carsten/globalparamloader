@@ -86,7 +86,7 @@
 			
 			foreach ($sets as $set) {
 				if(!$this->isPageSelected($context['params']['current-page-id'], $set['id'])) {
-					$parameters = $this->getParameters($set_id);
+					$parameters = $this->getParameters($set['id']);
 					foreach ($parameters as $parameter) {
 						/*
 							To do: add safe evaluation functionality.
