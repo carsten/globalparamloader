@@ -218,12 +218,14 @@
 			$ol = new XMLElement('ol');
 			
 			// Add existing parameters:
-			foreach ($this->_params as $sortorder => $param) {
-				$wrapper = new XMLElement('li');
+			if(isset($this->_params)) {
+				foreach ($this->_params as $sortorder => $param) {
+					$wrapper = new XMLElement('li');
 				
-				$this->displayParameter($wrapper, $sortorder, $param);
+					$this->displayParameter($wrapper, $sortorder, $param);
 				
-				$ol->appendChild($wrapper);
+					$ol->appendChild($wrapper);
+				}
 			}
 			
 			// Add parameter set:
