@@ -1,47 +1,54 @@
 <?php
 
 	require_once(TOOLKIT . '/class.datasource.php');
-	
+
 	class Extension_GlobalParamLoader extends Extension {
 	/*-------------------------------------------------------------------------
 		Definition:
 	-------------------------------------------------------------------------*/
-		
+
 		public static $params = array();
-		
+
 		public function about() {
 			return array(
 				'name'			=> 'Global Parameter Loader',
-				'version'		=> '1.1.7',
-				'release-date'	=> '2009-05-24',
+				'version'		=> '1.2',
+				'release-date'	=> '2011-03-08',
 				'author'		=> array(
-					'name'			=> 'Carsten de Vries',
-					'website'		=> 'http://www.vrieswerk.nl',
-					'email'			=> 'carsten@vrieswerk.nl'
-				),
+					array(
+						'name'			=> 'Carsten de Vries',
+						'website'		=> 'http://www.vrieswerk.nl',
+						'email'			=> 'carsten@vrieswerk.nl'
+					),
+					array(
+						'name'			=> 'Brendan Abbott',
+						'email'			=> 'brendan@bloodbone.ws'
+					)
+					),
 				'description'	=> 'Allows you to add parameters, PHP evaluated or not, to Symphony\'s parameter pool.'
 	 		);
 		}
-		
+
 		public function uninstall() {
-			$this->_Parent->Configuration->remove('globalparamloader');
-			$this->_Parent->Database->query("DROP TABLE `tbl_gpl_sets`");
-			$this->_Parent->Database->query("DROP TABLE `tbl_gpl_params`");
-			$this->_Parent->saveConfig();
+			Symphony::Configuration()->remove('globalparamloader');
+			Symphony::Configuration()->saveConfig();
+			Symphony::Database()->query("DROP TABLE `tbl_gpl_sets`");
+			Symphony::Database()->query("DROP TABLE `tbl_gpl_params`");
 		}
-		
+
 		public function install() {
-			$this->_Parent->Database->query("
+			Symphony::Database()->query("
 				CREATE TABLE IF NOT EXISTS `tbl_gpl_sets` (
 					`id` int(11) unsigned NOT NULL auto_increment,
 					`name` varchar(255) NOT NULL,
 					`params` int(11) unsigned,
 					`exclude_page` varchar(255),
-					PRIMARY KEY (`id`)
+					PRIMARY KEY (`id`),
+					INDEX `name` (`name`)
 				)
 			");
-			
-			$this->_Parent->Database->query("
+
+			Symphony::Database()->query("
 				CREATE TABLE IF NOT EXISTS `tbl_gpl_params` (
 					`id` int(11) NOT NULL auto_increment,
 					`set_id` int(11) NOT NULL,
@@ -49,13 +56,15 @@
 					`value` varchar(255),
 					`type` varchar(255) NOT NULL,
 					`sortorder` int(11) NOT NULL,
-					PRIMARY KEY (`id`)
+					PRIMARY KEY (`id`),
+					INDEX `param` (`param`),
+					INDEX `value` (`value`)
 				)
 			");
-			
+
 			return true;
 		}
-		
+
 		public function getSubscribedDelegates() {
 			return array(
 				array(
@@ -64,48 +73,77 @@
 					'callback'	=> 'addParam'
 				),
 				array(
-					'page'		=> '/system/sets/',
+					'page'		=> '/system/preferences/',
 					'delegate'	=> 'AddCustomPreferenceFieldsets',
-					'callback'	=> 'sets'
+					'callback'	=> 'appendPreferences'
 				)
 			);
 		}
-		
+
 		public function fetchNavigation() {
 			return array(
 				array(
 					'location'	=> 200,
-					'name'	=> 'Global Parameters',
+					'name'	=> __('Global Parameters'),
 					'link'	=> '/sets/'
 				)
 			);
 		}
-		
+
 		public function addParam(&$context) {
 			$sets = $this->getSets();
-			
+
 			foreach ($sets as $set) {
 				if(!$this->isPageSelected($context['params']['current-page-id'], $set['id'])) {
 					$parameters = $this->getParameters($set['id']);
 					foreach ($parameters as $parameter) {
 						/*
 							To do: add safe evaluation functionality.
-							If the parameter can be evaluated, it is. Otherwise, the parameter is 
+							If the parameter can be evaluated, it is. Otherwise, the parameter is
 							added to the context without evaluation.
 						*/
-						$context['params'][$parameter['param']] = @eval($parameter['value']) !== FALSE ? eval($parameter['value']) : $parameter['value'];
+						if(Extension_GlobalParamLoader::getEvalSetting() == 'yes') {
+							$context['params'][$parameter['param']] = eval($parameter['value']) !== FALSE ? eval($parameter['value']) : $parameter['value'];
+						}
+						else {
+							$context['params'][$parameter['param']] = $parameter['value'];
+						}
 					}
 				}
 			}
 		}
-			
+
+		public static function getEvalSetting() {
+			return Symphony::Configuration()->get('allow-eval', 'globalparameterloader');
+		}
+
+		public function appendPreferences($context) {
+			// Create preference group
+			$group = new XMLElement('fieldset');
+			$group->setAttribute('class', 'settings');
+			$group->appendChild(new XMLElement('legend', __('Global Parameter Loader')));
+
+			// Append settings
+			$label = Widget::Label();
+			$input = Widget::Input('settings[globalparameterloader][allow-eval]', 'yes', 'checkbox');
+			if(Extension_GlobalParamLoader::getEvalSetting() == 'yes') $input->setAttribute('checked', 'checked');
+			$label->setValue($input->generate() . ' ' . __('Allow parameters to be evaluated with <code>eval</code>?'));
+			$group->appendChild($label);
+
+			// Append help
+			$group->appendChild(new XMLElement('p',__('On some environments, <code>eval</code> can cause strange 500 errors. Turning off <code>eval</code> will prevent you from using PHP expressions in your parameters.'), array('class' => 'help')));
+
+			// Append new preference group
+			$context['wrapper']->appendChild($group);
+		}
+
 	/*-------------------------------------------------------------------------
 		Utility functions:
 	-------------------------------------------------------------------------*/
-		
+
 		public function getParameters($set_id = null) {
 			if (is_numeric($set_id)) {
-				return $this->_Parent->Database->fetch("
+				return Symphony::Database()->fetch("
 					SELECT
 						c.*
 					FROM
@@ -115,9 +153,9 @@
 					ORDER BY
 						c.sortorder ASC
 				");
-				
+
 			} else {
-				return $this->_Parent->Database->fetch("
+				return Symphony::Database()->fetch("
 					SELECT
 						c.*
 					FROM
@@ -127,41 +165,41 @@
 				");
 			}
 		}
-		
+
 		public function getPages() {
-			$pages = $this->_Parent->Database->fetch("
+			$pages = Symphony::Database()->fetch("
 				SELECT
-					p.*
+					p.path, p.handle, p.id
 				FROM
 					`tbl_pages` AS p
 				ORDER BY
 					`sortorder` ASC
 			");
 			$result = array();
-			
+
 			foreach ($pages as $page) {
 				$page = (object)$page;
 				$path = '';
-				
+
 				if ($page->path) {
 					$path = '/' . $page->path;
 				}
-				
+
 				$path .= '/' . $page->handle;
-				
+
 				$result[] = (object)array(
 					'id'	=> $page->id,
 					'path'	=> $path
 				);
 			}
-			
+
 			sort($result);
-			
+
 			return $result;
 		}
-		
+
 		public function getSets() {
-			return $this->_Parent->Database->fetch("
+			return Symphony::Database()->fetch("
 				SELECT
 					s.*
 				FROM
@@ -170,9 +208,9 @@
 					s.name ASC
 			");
 		}
-		
+
 		public function getSet($set_id) {
-			return $this->_Parent->Database->fetchRow(0, "
+			return Symphony::Database()->fetchRow(0, "
 				SELECT
 					s.*
 				FROM
@@ -182,17 +220,17 @@
 				LIMIT 1
 			");
 		}
-		
+
 		public function getParamPages($set_id) {
 			$set = $this->getSet($set_id);
-			
+
 			return explode(',', $set['exclude_page']);
 		}
-		
+
 		public function isPageSelected($id, $set_id) {
 			$pages = $this->getParamPages($set_id);
-			
+
 			return in_array($id, $pages);
-		}		
+		}
 	}
 ?>
