@@ -31,7 +31,7 @@
 
 		public function uninstall() {
 			Symphony::Configuration()->remove('globalparamloader');
-			Symphony::Configuration()->saveConfig();
+			Administration::instance()->saveConfig();
 			Symphony::Database()->query("DROP TABLE `tbl_gpl_sets`");
 			Symphony::Database()->query("DROP TABLE `tbl_gpl_params`");
 		}
