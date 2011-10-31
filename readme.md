@@ -21,11 +21,12 @@ if you are not absolutely sure that your Symphony installation is secure.
 
 ## Usage
 
-1. View the Blueprints > Global Parameters page to add, edit, and remove Parameter Sets.
+1.  View the Blueprints > Global Parameters page to add, edit, and remove Parameter Sets.
 2.  Click the create new button to create your first Parameter Set. Give the Parameter Set a name.
 3.  Click Add item to add a parameter. At least one parameter must be defined for each set, and each parameter must have a name.
 4.  Choose any pages you wish to exclude from this Parameter Set.
 5.  Click the Create Set button. Now, go see your newly added parameters at your pages in Parameter debug mode (add ?debug=params to the page URL).
+6.  (optional) If you want your parameters to be evaluated as PHP code you need to enable it in the global preferences section.
 
 ## Examples
 
