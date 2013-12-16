@@ -87,7 +87,7 @@
 		// Save: --------------------------------------------------------------
 			
 			$this->_fields['params'] = (integer)count($this->_params);
-			$this->_fields['exclude_page'] = implode(',', $this->_fields['exclude_page']);
+			if($this->_fields['exclude_page']) $this->_fields['exclude_page'] = implode(',', $this->_fields['exclude_page']);
 			
 			$this->_Parent->Database->insert($this->_fields, 'tbl_gpl_sets', true);
 			$this->_Parent->Database->update($this->_fields, 'tbl_gpl_sets', "`id` = '".$this->_fields['id']."'");
